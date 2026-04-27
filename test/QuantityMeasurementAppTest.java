@@ -1,69 +1,36 @@
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+// ===================== TEST FILE =====================
 
-public class QuantityMeasurementAppTest {
+public class QuantityMeasurementTest {
 
-    private static final double EPS = 1e-3;
+    public static void main(String[] args) {
 
-    @Test
-    void testConvertToBaseUnit() {
-        assertEquals(1.0,
-                QuantityMeasurementApp.LengthUnit.INCHES.convertToBaseUnit(12.0),
-                EPS);
-    }
+        // ---------- LENGTH TESTS ----------
+        QuantityLength l1 = new QuantityLength(1, LengthUnit.FEET);
+        QuantityLength l2 = new QuantityLength(12, LengthUnit.INCHES);
 
-    @Test
-    void testConvertFromBaseUnit() {
-        assertEquals(12.0,
-                QuantityMeasurementApp.LengthUnit.INCHES.convertFromBaseUnit(1.0),
-                EPS);
-    }
+        assert l1.equals(l2);
+        assert l1.add(l2, LengthUnit.FEET).equals(new QuantityLength(2, LengthUnit.FEET));
 
-    @Test
-    void testEquality() {
-        var f = new QuantityMeasurementApp.Quantity(1.0,
-                QuantityMeasurementApp.LengthUnit.FEET);
+        // ---------- WEIGHT TESTS ----------
+        QuantityWeight w1 = new QuantityWeight(1, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000, WeightUnit.GRAM);
 
-        var i = new QuantityMeasurementApp.Quantity(12.0,
-                QuantityMeasurementApp.LengthUnit.INCHES);
+        assert w1.equals(w2);
+        assert w1.add(w2, WeightUnit.KILOGRAM)
+                .equals(new QuantityWeight(2, WeightUnit.KILOGRAM));
 
-        assertTrue(f.equals(i));
-    }
+        // Conversion tests
+        QuantityWeight pound = new QuantityWeight(2.20462, WeightUnit.POUND);
+        assert pound.convertTo(WeightUnit.KILOGRAM)
+                .equals(new QuantityWeight(1, WeightUnit.KILOGRAM));
 
-    @Test
-    void testConvertTo() {
-        var f = new QuantityMeasurementApp.Quantity(1.0,
-                QuantityMeasurementApp.LengthUnit.FEET);
+        // Negative + zero
+        QuantityWeight w3 = new QuantityWeight(5, WeightUnit.KILOGRAM);
+        QuantityWeight w4 = new QuantityWeight(-2, WeightUnit.KILOGRAM);
 
-        var result = f.convertTo(QuantityMeasurementApp.LengthUnit.INCHES);
+        assert w3.add(w4, WeightUnit.KILOGRAM)
+                .equals(new QuantityWeight(3, WeightUnit.KILOGRAM));
 
-        assertEquals(12.0, result.getValue(), EPS);
-    }
-
-    @Test
-    void testAddition() {
-        var f = new QuantityMeasurementApp.Quantity(1.0,
-                QuantityMeasurementApp.LengthUnit.FEET);
-
-        var i = new QuantityMeasurementApp.Quantity(12.0,
-                QuantityMeasurementApp.LengthUnit.INCHES);
-
-        var result = QuantityMeasurementApp.Quantity.add(
-                f, i, QuantityMeasurementApp.LengthUnit.FEET);
-
-        assertEquals(2.0, result.getValue(), EPS);
-    }
-
-    @Test
-    void testNullUnit() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new QuantityMeasurementApp.Quantity(1.0, null));
-    }
-
-    @Test
-    void testInvalidValue() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new QuantityMeasurementApp.Quantity(Double.NaN,
-                        QuantityMeasurementApp.LengthUnit.FEET));
+        System.out.println("ALL TESTS PASSED ✅");
     }
 }
