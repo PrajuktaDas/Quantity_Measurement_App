@@ -35,31 +35,34 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
+        public double getValue() {
+            return value;
+        }
+
+        public LengthUnit getUnit() {
+            return unit;
+        }
+
         private double toFeet() {
             return unit.toFeet(value);
         }
 
-        // ----------- ADD METHOD (CORE UC6) -----------
+        // ----------- UC6 (default: result in first operand unit) -----------
         public Quantity add(Quantity other) {
-            if (other == null) {
-                throw new IllegalArgumentException("Other quantity cannot be null");
-            }
-
-            double sumFeet = this.toFeet() + other.toFeet();
-
-            // convert back to THIS unit
-            double result = this.unit.fromFeet(sumFeet);
-
-            return new Quantity(result, this.unit);
+            return add(this, other, this.unit);
         }
 
-        // ----------- STATIC ADD (optional API) -----------
+        // ----------- UC7 (EXPLICIT TARGET UNIT) -----------
         public static Quantity add(Quantity q1, Quantity q2, LengthUnit targetUnit) {
-            if (q1 == null || q2 == null || targetUnit == null) {
-                throw new IllegalArgumentException("Invalid input");
-            }
+
+            if (q1 == null || q2 == null)
+                throw new IllegalArgumentException("Operands cannot be null");
+
+            if (targetUnit == null)
+                throw new IllegalArgumentException("Target unit cannot be null");
 
             double sumFeet = q1.toFeet() + q2.toFeet();
+
             double result = targetUnit.fromFeet(sumFeet);
 
             return new Quantity(result, targetUnit);
